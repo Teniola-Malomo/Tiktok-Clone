@@ -7,8 +7,6 @@
 //
 
 import Foundation
-import UIKit
-import AVFoundation
 
 struct Post: Codable{
     var id: String
@@ -56,29 +54,6 @@ struct Post: Codable{
         self.likeCount = likeCount
         self.shareCount = shareCount
         self.commentID = commentID
-    }
-    
-    init(dictionary: [String: Any]) {
-        id = dictionary["id"] as? String ?? ""
-        video = dictionary["video"] as? String ?? ""
-        let urlString = dictionary["videoURL"] as? String ?? ""
-        videoURL = URL(string: urlString)
-        videoFileExtension = dictionary["videoFileExtension"] as? String ?? ""
-        videoHeight = dictionary["videoHeight"] as? Int ?? 0
-        videoWidth = dictionary["videoWidth"] as? Int ?? 0
-        autherID = dictionary["author"] as? String ?? ""
-        autherName = dictionary["autherName"] as? String ?? ""
-        caption = dictionary["caption"] as? String ?? ""
-        music = dictionary["music"] as? String ?? ""
-        likeCount = dictionary["likeCount"] as? Int ?? 0
-        shareCount = dictionary["shareCount"] as? Int ?? 0
-        commentID = dictionary["commentID"] as? String ?? ""
-    }
-
-    
-    var dictionary: [String: Any] {
-        let data = (try? JSONEncoder().encode(self)) ?? Data()
-        return (try? JSONSerialization.jsonObject(with: data, options: [.mutableContainers, .allowFragments]) as? [String: Any]) ?? [:]
     }
     
 }

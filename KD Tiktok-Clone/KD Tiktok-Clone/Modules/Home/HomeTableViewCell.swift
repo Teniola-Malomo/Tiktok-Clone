@@ -9,7 +9,7 @@
 import UIKit
 import AVFoundation
 
-protocol HomeCellNavigationDelegate: class {
+protocol HomeCellNavigationDelegate: AnyObject {
     // Navigate to Profile Page
     func navigateToProfilePage(uid: String, name: String)
 }
@@ -66,9 +66,6 @@ class HomeTableViewCell: UITableViewCell {
         super.awakeFromNib()
         selectionStyle = .none
         playerView = VideoPlayerView(frame: self.contentView.frame)
-        // MarqueeLabel properties removed — using standard UILabel now
-        
-        
         contentView.addSubview(playerView)
         contentView.sendSubviewToBack(playerView)
         
@@ -90,7 +87,6 @@ class HomeTableViewCell: UITableViewCell {
         musicLbl.text = post.music + "   " + post.music + "   " + post.music + "   "// Long enough to enable scrolling
         captionLbl.text = post.caption
         likeCountLbl.text = post.likeCount.shorten()
-        //commentCountLbl.text = post.comments?.count.shorten()
         shareCountLbl.text = post.shareCount.shorten()
         
         playerView.configure(url: post.videoURL, fileExtension: post.videoFileExtension, size: (post.videoWidth, post.videoHeight))
@@ -107,7 +103,6 @@ class HomeTableViewCell: UITableViewCell {
     func play() {
         if !isPlaying {
             playerView.play()
-            // musicLbl.holdScrolling = false
             isPlaying = true
         }
     }
@@ -115,7 +110,6 @@ class HomeTableViewCell: UITableViewCell {
     func pause(){
         if isPlaying {
             playerView.pause()
-            // musicLbl.holdScrolling = true
             isPlaying = false
         }
     }

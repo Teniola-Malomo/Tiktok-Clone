@@ -26,10 +26,6 @@ class CommentPopUpView: UIView, UIScrollViewDelegate {
     var panGesture : UIPanGestureRecognizer!
     
     // MARK: - Initializers
-    deinit {
-        print("deinit")
-    }
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()

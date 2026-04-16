@@ -14,8 +14,6 @@ class HomeViewModel: NSObject {
     
     private(set) var currentVideoIndex = 0
     
-    //let videoPlayerManager = VideoPlayerManager()
-    
     let isLoading = BehaviorSubject<Bool>(value: true)
     let posts = BehaviorSubject<[Post]>(value: [])
     let error = PublishSubject<Error>()
@@ -40,10 +38,6 @@ class HomeViewModel: NSObject {
     
 
     
-    /**
-     * First, if videos exist in cache, acquire the cached video
-     * Second, if videos don't exist in cache, make a request to firebase and download the video
-     */
     func getPosts(pageNumber: Int, size: Int){
         self.isLoading.onNext(true)
 
@@ -77,22 +71,5 @@ class HomeViewModel: NSObject {
         self.posts.onNext(self.docs)
         self.isLoading.onNext(false)
     }
-    
-    
-    // TODO: Create a cache manager to store videos in cache
-    
-}
 
-// MARK: - Manage User Interaction in the screen
-extension HomeViewModel{
-    // Like a video
-    func likeVideo(){
-        
-    }
-    
-    // Commenting a video
-    func commentVideo(comment: String){
-        
-    }
-    
 }

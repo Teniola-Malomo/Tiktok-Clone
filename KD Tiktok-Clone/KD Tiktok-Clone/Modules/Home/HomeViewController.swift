@@ -46,7 +46,6 @@ class HomeViewController: BaseViewController {
         viewModel.setAudioMode()
         setupView()
         setupBinding()
-        setupObservers()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -115,18 +114,6 @@ class HomeViewController: BaseViewController {
                 self.showAlert(err.localizedDescription)
             }).disposed(by: disposeBag)
         
-        ProfileViewModel.shared.cleardCache
-            .asObserver()
-            .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { cleard in
-                if cleard {
-                    //self.mainTableView.reloadData()
-                }
-            }).disposed(by: disposeBag)
-    }
-    
-    func setupObservers(){
-        
     }
 
 }
@@ -168,9 +155,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource, UITabl
     }
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-//        for indexPath in indexPaths {
-//            print(indexPath.row)
-//        }
     }
     
     
@@ -186,7 +170,6 @@ extension HomeViewController: UIScrollViewDelegate {
 }
 
 // MARK: - Navigation Delegate
-// TODO: Customized Transition
 extension HomeViewController: HomeCellNavigationDelegate {
     func navigateToProfilePage(uid: String, name: String) {
         self.navigationController?.pushViewController(ProfileViewController(), animated: true)
