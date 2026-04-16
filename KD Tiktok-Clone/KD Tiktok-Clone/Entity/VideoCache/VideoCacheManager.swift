@@ -8,7 +8,6 @@
 
 import Foundation
 import CryptoKit
-import FirebaseStorage
 
 class VideoCacheManager: NSObject {
 
@@ -71,7 +70,7 @@ class VideoCacheManager: NSObject {
      * Query Video Data:
      *  1. Check if file with the key exists in memory cache, if yes, return data
      *  2. Check if file with the key exists in disk cache, if yes, return data and store data to memory cache
-     *  3. Download data from Firebase(In PostsRequest)
+     *  3. Download data from network if not cached
      */
     func queryDataFromCache(key: String, fileExtension: String?, completion: @escaping (_ data: Any?) -> Void){
         if let data = dataFromMemoryCache(key: key) {

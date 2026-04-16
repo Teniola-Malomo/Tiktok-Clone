@@ -8,7 +8,6 @@
 
 import Foundation
 import RxSwift
-import FirebaseFirestore
 import AVFoundation
 
 class HomeViewModel: NSObject {
@@ -18,7 +17,7 @@ class HomeViewModel: NSObject {
     //let videoPlayerManager = VideoPlayerManager()
     
     let isLoading = BehaviorSubject<Bool>(value: true)
-    let posts = PublishSubject<[Post]>()
+    let posts = BehaviorSubject<[Post]>(value: [])
     let error = PublishSubject<Error>()
 
     private var docs = [Post]()
@@ -47,26 +46,36 @@ class HomeViewModel: NSObject {
      */
     func getPosts(pageNumber: Int, size: Int){
         self.isLoading.onNext(true)
-        PostsRequest.getPostsByPages(pageNumber: pageNumber, size: size, success: { [weak self] data in
-            guard let self = self else { return }
-            //self.isLoading.onNext(false)
-            if let data = data as? QuerySnapshot {
-                for document in data.documents{
-                    // Convert data into Post Entity
-                    var post = Post(dictionary: document.data())
-                    post.id = document.documentID
-                    self.docs.append(post)
-                }
-                
-                self.posts.onNext(self.docs)
-                self.isLoading.onNext(false)
-            }
 
-        }, failure: { [weak self] error in
-            guard let self = self else { return }
-            self.isLoading.onNext(false)
-            self.error.onNext(error)
-        })
+        // Using sample data instead of Firebase
+        // Publicly accessible sample videos
+        let sampleVideos = [
+            "https://media.w3.org/2010/05/sintel/trailer_hd.mp4",
+            "https://media.w3.org/2010/05/bunny/trailer.mp4",
+            "https://media.w3.org/2010/05/bunny/movie.mp4"
+        ]
+
+        for (index, videoURLString) in sampleVideos.enumerated() {
+            let post = Post(
+                id: "\(index)",
+                video: videoURLString,
+                videoURL: URL(string: videoURLString),
+                videoFileExtension: "mp4",
+                videoHeight: 1920,
+                videoWidth: 1080,
+                autherID: "user\(index)",
+                autherName: "SampleUser\(index)",
+                caption: "This is a sample video #\(index + 1)",
+                music: "Original Sound",
+                likeCount: Int.random(in: 100...50000),
+                shareCount: Int.random(in: 50...10000),
+                commentID: "comment\(index)"
+            )
+            self.docs.append(post)
+        }
+
+        self.posts.onNext(self.docs)
+        self.isLoading.onNext(false)
     }
     
     

@@ -8,7 +8,6 @@
 
 import UIKit
 import AVFoundation
-import MarqueeLabel
 
 protocol HomeCellNavigationDelegate: class {
     // Navigate to Profile Page
@@ -21,7 +20,7 @@ class HomeTableViewCell: UITableViewCell {
     var playerView: VideoPlayerView!
     @IBOutlet weak var nameBtn: UIButton!
     @IBOutlet weak var captionLbl: UILabel!
-    @IBOutlet weak var musicLbl: MarqueeLabel!
+    @IBOutlet weak var musicLbl: UILabel!
     @IBOutlet weak var profileImgView: UIImageView!{
         didSet{
             profileImgView.isUserInteractionEnabled = true
@@ -67,8 +66,7 @@ class HomeTableViewCell: UITableViewCell {
         super.awakeFromNib()
         selectionStyle = .none
         playerView = VideoPlayerView(frame: self.contentView.frame)
-        musicLbl.holdScrolling = true
-        musicLbl.animationDelay = 0
+        // MarqueeLabel properties removed — using standard UILabel now
         
         
         contentView.addSubview(playerView)
@@ -109,7 +107,7 @@ class HomeTableViewCell: UITableViewCell {
     func play() {
         if !isPlaying {
             playerView.play()
-            musicLbl.holdScrolling = false
+            // musicLbl.holdScrolling = false
             isPlaying = true
         }
     }
@@ -117,7 +115,7 @@ class HomeTableViewCell: UITableViewCell {
     func pause(){
         if isPlaying {
             playerView.pause()
-            musicLbl.holdScrolling = true
+            // musicLbl.holdScrolling = true
             isPlaying = false
         }
     }

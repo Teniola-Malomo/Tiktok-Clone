@@ -1,0 +1,19 @@
+What was done (commit message):
+Remove Firebase dependencies, fix build errors, and get video feed playing with sample data
+
+Details:
+- Removed Firebase, MarqueeLabel, and unused modules (Discover, Inbox, Media, Network)
+- Trimmed tab bar to 2 tabs: Feed and Profile
+- Fixed XIB custom class (MarqueeLabel -> UILabel)
+- Fixed deployment target (iOS 8 -> 13) to resolve libarclite build error
+- Added post_install hook in Podfile to force all pods to iOS 13
+- Replaced Firebase PostsRequest with hardcoded sample video data
+- Changed posts from PublishSubject to BehaviorSubject to fix timing bug where data emitted before subscription
+- Simplified VideoPlayerView to load videos directly via AVPlayer instead of custom streaming/caching layer
+- Swapped to W3C-hosted sample videos after Google CDN returned 403 errors
+- App builds and runs on simulator with video playback working
+
+Next steps:
+- Phase 1: Wire up Pexels API to replace sample videos with real content
+- Fix video aspect ratio to fill screen like TikTok does
+- Fix UI overlay spacing/positioning issues
