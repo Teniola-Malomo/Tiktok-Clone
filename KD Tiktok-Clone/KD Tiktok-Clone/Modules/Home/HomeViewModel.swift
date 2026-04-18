@@ -22,7 +22,7 @@ class HomeViewModel: NSObject {
     
     override init() {
         super.init()
-        getPosts(pageNumber: 1, size: 10)
+        getPosts(page: 1, perPage: 80)
     }
     
     // Setup Audio
@@ -38,38 +38,45 @@ class HomeViewModel: NSObject {
     
 
     
-    func getPosts(pageNumber: Int, size: Int){
+    func getPosts(page: Int, perPage: Int) {
         self.isLoading.onNext(true)
 
-        // Using sample data instead of Firebase
-        // Publicly accessible sample videos
-        let sampleVideos = [
-            "https://media.w3.org/2010/05/sintel/trailer_hd.mp4",
-            "https://media.w3.org/2010/05/bunny/trailer.mp4",
-            "https://media.w3.org/2010/05/bunny/movie.mp4"
-        ]
+        Task {
+            do {
+                let response = try await PexelsAPIRequest.fetchVideos(query: "people", perPage: perPage, page: page)
 
-        for (index, videoURLString) in sampleVideos.enumerated() {
-            let post = Post(
-                id: "\(index)",
-                video: videoURLString,
-                videoURL: URL(string: videoURLString),
-                videoFileExtension: "mp4",
-                videoHeight: 1920,
-                videoWidth: 1080,
-                autherID: "user\(index)",
-                autherName: "SampleUser\(index)",
-                caption: "This is a sample video #\(index + 1)",
-                music: "Original Sound",
-                likeCount: Int.random(in: 100...50000),
-                shareCount: Int.random(in: 50...10000),
-                commentID: "comment\(index)"
-            )
-            self.docs.append(post)
+                let newPosts = response.videos.compactMap { video -> Post? in
+                    // Pick the best video file: HD MP4, or fall back to any MP4
+                    guard let file = video.videoFiles.first(where: { $0.quality == "hd" && $0.fileType == "video/mp4" })
+                            ?? video.videoFiles.first(where: { $0.fileType == "video/mp4" }) else {
+                        return nil
+                    }
+
+                    return Post(
+                        id: String(video.id),
+                        video: file.link,
+                        videoURL: URL(string: file.link),
+                        videoFileExtension: "mp4",
+                        videoHeight: video.height,
+                        videoWidth: video.width,
+                        autherID: String(video.user.id),
+                        autherName: video.user.name,
+                        caption: "",
+                        music: "Original Sound",
+                        likeCount: 0,
+                        shareCount: 0,
+                        commentID: ""
+                    )
+                }
+
+                self.docs.append(contentsOf: newPosts)
+                self.posts.onNext(self.docs)
+                self.isLoading.onNext(false)
+            } catch {
+                self.error.onNext(error)
+                self.isLoading.onNext(false)
+            }
         }
-
-        self.posts.onNext(self.docs)
-        self.isLoading.onNext(false)
     }
 
 }

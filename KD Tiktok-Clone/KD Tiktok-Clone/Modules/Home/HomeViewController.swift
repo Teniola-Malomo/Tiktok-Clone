@@ -163,10 +163,19 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource, UITabl
 // MARK: - ScrollView Extension
 extension HomeViewController: UIScrollViewDelegate {
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            playCurrentCell()
+        }
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        playCurrentCell()
+    }
+
+    private func playCurrentCell() {
         let cell = self.mainTableView.cellForRow(at: IndexPath(row: self.currentIndex, section: 0)) as? HomeTableViewCell
         cell?.replay()
     }
-    
 }
 
 // MARK: - Navigation Delegate

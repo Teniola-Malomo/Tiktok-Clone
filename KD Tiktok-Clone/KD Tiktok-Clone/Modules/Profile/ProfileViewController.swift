@@ -56,15 +56,13 @@ class ProfileViewController: UIViewController {
         collectionView.register(ProfileCollectionViewCell.self, forCellWithReuseIdentifier: CELLID)
         collectionView.layoutIfNeeded()
         
-        // Profile Background Image view
-        profileBackgroundImgView = UIImageView(image: #imageLiteral(resourceName: "ProfileBackground"))
+        // Profile Background
+        profileBackgroundImgView = UIImageView()
         profileBackgroundImgView.translatesAutoresizingMaskIntoConstraints = false
-        profileBackgroundImgView.contentMode = .scaleAspectFill
-        profileBackgroundImgView.alpha = 0.6
+        profileBackgroundImgView.backgroundColor = UIColor(red: 0.12, green: 0.12, blue: 0.14, alpha: 1.0)
         self.view.insertSubview(profileBackgroundImgView, belowSubview: collectionView)
         profileBackgroundImgView.snp.makeConstraints({ make in
-            make.top.left.right.equalToSuperview()
-            make.height.equalTo(150)
+            make.edges.equalToSuperview()
         })
         
     }
@@ -126,7 +124,7 @@ extension ProfileViewController: UICollectionViewDelegate, UICollectionViewDataS
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         switch section {
         case 0:
-            return CGSize.init(width: ScreenSize.Width, height: 420)
+            return CGSize.init(width: ScreenSize.Width, height: 340)
         case 1:
             return CGSize.init(width: ScreenSize.Width, height: 42)
         default:
@@ -144,22 +142,4 @@ extension ProfileViewController: UICollectionViewDelegate, UICollectionViewDataS
 }
 
 extension ProfileViewController: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        /// Y offsets of the scroll view
-        let offsetY = scrollView.contentOffset.y
-        if offsetY < 0 {
-            stretchProfileBackgroundWhenScroll(offsetY: offsetY)
-        } else {
-            profileBackgroundImgView.transform = CGAffineTransform(translationX: 0, y: -offsetY)
-        }
-        
-    }
-    
-    // Stretch Profile Background Image when scroll up
-    func stretchProfileBackgroundWhenScroll(offsetY: CGFloat)  {
-        let scaleRatio: CGFloat = abs(offsetY)/500.0
-        let scaledHeight: CGFloat = scaleRatio * profileBackgroundImgView.frame.height
-        profileBackgroundImgView.transform = CGAffineTransform.init(scaleX: scaleRatio + 1.0, y: scaleRatio + 1.0).concatenating(CGAffineTransform.init(translationX: 0, y: scaledHeight))
-    }
-    
 }

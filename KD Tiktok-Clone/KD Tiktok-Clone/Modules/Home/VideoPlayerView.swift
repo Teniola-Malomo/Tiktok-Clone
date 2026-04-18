@@ -45,7 +45,7 @@ class VideoPlayerView: UIView {
     }
 
     func configure(url: URL?, fileExtension: String?, size: (Int, Int)){
-        avPlayerLayer.videoGravity = (size.0 < size.1) ? .resizeAspectFill : .resizeAspect
+        avPlayerLayer.videoGravity = .resizeAspectFill
         self.layer.addSublayer(self.avPlayerLayer)
 
         guard let url = url else { return }
