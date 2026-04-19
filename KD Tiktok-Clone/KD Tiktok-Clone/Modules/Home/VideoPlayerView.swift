@@ -3,6 +3,7 @@
 //  KD Tiktok-Clone
 //
 //  Created by Sam Ding on 9/24/20.
+//  Edited by Teniola Malomo on 18/04/2026.
 //  Copyright © 2020 Kaishan. All rights reserved.
 //
 
@@ -19,10 +20,12 @@ class VideoPlayerView: UIView {
     var playerLooper: AVPlayerLooper!
     var queuePlayer: AVQueuePlayer?
     var observer: NSKeyValueObservation?
+    private let spinner = UIActivityIndicatorView(style: .large)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        setupSpinner()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -44,12 +47,25 @@ class VideoPlayerView: UIView {
         self.layer.addSublayer(self.avPlayerLayer)
     }
 
+    private func setupSpinner() {
+        spinner.color = .white
+        spinner.hidesWhenStopped = true
+        addSubview(spinner)
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            spinner.centerXAnchor.constraint(equalTo: centerXAnchor),
+            spinner.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
+        spinner.startAnimating()
+    }
+
     func configure(url: URL?, fileExtension: String?, size: (Int, Int)){
         avPlayerLayer.videoGravity = .resizeAspectFill
         self.layer.addSublayer(self.avPlayerLayer)
 
         guard let url = url else { return }
         self.videoURL = url
+        spinner.startAnimating()
 
         self.asset = AVURLAsset(url: url)
         self.playerItem = AVPlayerItem(asset: self.asset!)
@@ -95,16 +111,19 @@ class VideoPlayerView: UIView {
     }
 
     private func addObserverToPlayerItem() {
-        self.observer = self.playerItem!.observe(\.status, options: [.initial, .new], changeHandler: { item, _ in
-            switch item.status {
-            case .readyToPlay:
-                print("Status: readyToPlay")
-            case .failed:
-                print("Status: failed Error: " + (item.error?.localizedDescription ?? "unknown"))
-            case .unknown:
-                print("Status: unknown")
-            @unknown default:
-                break
+        self.observer = self.playerItem!.observe(\.status, options: [.initial, .new], changeHandler: { [weak self] item, _ in
+            DispatchQueue.main.async {
+                switch item.status {
+                case .readyToPlay:
+                    self?.spinner.stopAnimating()
+                case .failed:
+                    self?.spinner.stopAnimating()
+                    print("Status: failed Error: " + (item.error?.localizedDescription ?? "unknown"))
+                case .unknown:
+                    break
+                @unknown default:
+                    break
+                }
             }
         })
     }

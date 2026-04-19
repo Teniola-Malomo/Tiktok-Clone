@@ -3,6 +3,7 @@
 //  KD Tiktok-Clone
 //
 //  Created by Sam Ding on 9/8/20.
+//  Edited by Teniola Malomo on 18/04/2026.
 //  Copyright © 2020 Kaishan. All rights reserved.
 //
 
@@ -90,6 +91,9 @@ class HomeTableViewCell: UITableViewCell {
         shareCountLbl.text = post.shareCount.shorten()
         
         playerView.configure(url: post.videoURL, fileExtension: post.videoFileExtension, size: (post.videoWidth, post.videoHeight))
+
+        liked = LikeService.isLiked(postId: post.id)
+        likeBtn.tintColor = liked ? .red : .white
     }
     
     
@@ -145,13 +149,15 @@ class HomeTableViewCell: UITableViewCell {
     // MARK: - Actions
     // Like Video Actions
     @IBAction func like(_ sender: Any) {
+        guard let post = post else { return }
         if !liked {
             likeVideo()
+            LikeService.like(postId: post.id)
         } else {
             liked = false
             likeBtn.tintColor = .white
+            LikeService.unlike(postId: post.id)
         }
-        
     }
     
     @objc func likeVideo(){
@@ -160,6 +166,7 @@ class HomeTableViewCell: UITableViewCell {
             likeBtn.tintColor = .red
         }
     }
+    
     
     // Heart Animation with random angle
     @objc func handleLikeGesture(sender: UITapGestureRecognizer){
@@ -189,7 +196,11 @@ class HomeTableViewCell: UITableViewCell {
     }
     
     @IBAction func share(_ sender: Any) {
-        
+
+    }
+
+    @IBAction func nameTapped(_ sender: Any) {
+        navigateToProfilePage()
     }
     
     @objc func navigateToProfilePage(){

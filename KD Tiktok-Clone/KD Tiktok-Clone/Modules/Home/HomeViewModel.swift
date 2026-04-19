@@ -3,6 +3,7 @@
 //  KD Tiktok-Clone
 //
 //  Created by Sam Ding on 9/8/20.
+//  Edited by Teniola Malomo on 18/04/2026.
 //  Copyright © 2020 Kaishan. All rights reserved.
 //
 
@@ -19,12 +20,14 @@ class HomeViewModel: NSObject {
     let error = PublishSubject<Error>()
 
     private var docs = [Post]()
-    
+    private let perPage = 80
+    private let totalVideos = 200
+
     override init() {
         super.init()
-        getPosts(page: 1, perPage: 80)
+        fetchAllVideos()
     }
-    
+
     // Setup Audio
     func setAudioMode() {
         do {
@@ -33,49 +36,55 @@ class HomeViewModel: NSObject {
         } catch (let err){
             print("setAudioMode error:" + err.localizedDescription)
         }
-        
-    }
-    
 
-    
-    func getPosts(page: Int, perPage: Int) {
-        self.isLoading.onNext(true)
+    }
+
+    func fetchAllVideos() {
+        let totalPages = (totalVideos + perPage - 1) / perPage
 
         Task {
-            do {
-                let response = try await PexelsAPIRequest.fetchVideos(query: "people", perPage: perPage, page: page)
+            self.isLoading.onNext(true)
 
-                let newPosts = response.videos.compactMap { video -> Post? in
-                    // Pick the best video file: HD MP4, or fall back to any MP4
-                    guard let file = video.videoFiles.first(where: { $0.quality == "hd" && $0.fileType == "video/mp4" })
-                            ?? video.videoFiles.first(where: { $0.fileType == "video/mp4" }) else {
-                        return nil
-                    }
+            for page in 1...totalPages {
+                let remaining = totalVideos - self.docs.count
+                let pageCount = min(perPage, remaining)
 
-                    return Post(
-                        id: String(video.id),
-                        video: file.link,
-                        videoURL: URL(string: file.link),
-                        videoFileExtension: "mp4",
-                        videoHeight: video.height,
-                        videoWidth: video.width,
-                        autherID: String(video.user.id),
-                        autherName: video.user.name,
-                        caption: "",
-                        music: "Original Sound",
-                        likeCount: 0,
-                        shareCount: 0,
-                        commentID: ""
-                    )
+                do {
+                    let response = try await PexelsAPIRequest.fetchVideos(query: "people", perPage: pageCount, page: page)
+                    let newPosts = self.convertToPosts(videos: response.videos)
+                    self.docs.append(contentsOf: newPosts)
+                    self.posts.onNext(self.docs)
+                } catch {
+                    self.error.onNext(error)
                 }
-
-                self.docs.append(contentsOf: newPosts)
-                self.posts.onNext(self.docs)
-                self.isLoading.onNext(false)
-            } catch {
-                self.error.onNext(error)
-                self.isLoading.onNext(false)
             }
+
+            self.isLoading.onNext(false)
+        }
+    }
+    
+    func convertToPosts(videos: [PexelsVideo]) -> [Post] {
+        return videos.compactMap { video -> Post? in
+            guard let file = video.videoFiles.first(where: { $0.quality == "hd" && $0.fileType == "video/mp4" })
+                    ?? video.videoFiles.first(where: { $0.fileType == "video/mp4" }) else {
+                return nil
+            }
+
+            return Post(
+                id: String(video.id),
+                video: file.link,
+                videoURL: URL(string: file.link),
+                videoFileExtension: "mp4",
+                videoHeight: video.height,
+                videoWidth: video.width,
+                autherID: String(video.user.id),
+                autherName: video.user.name,
+                caption: "",
+                music: "Original Sound",
+                likeCount: 0,
+                shareCount: 0,
+                commentID: ""
+            )
         }
     }
 
