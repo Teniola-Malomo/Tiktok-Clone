@@ -26,6 +26,13 @@ Currently, content is streamed from Pexels' videos and pulled in chunks but neve
 
 The Pexels API returns multiple different video formats: SD, Ultra HD, and HD. I went with HD as a middle ground between the two. Ideally, there should be some kind of mechanism to adaptively check the bandwidth or what the phone can support and then return the best option.
 
+## Not Completed
+
+- Error state and retry when a video fails to load
+- Profile grid showing real video thumbnails (currently placeholder)
+- Tapping a profile grid video to open and play it
+- TestFlight build (requires paid Apple Developer account)
+
 ## What I'd Improve With More Time
 
-If I had extra time, I would definitely focus more on the UI. I focused on getting the functional requirements done and nailed first. A definite improvement would be to mirror the way TikTok loads its content for mobile, and making sure there's buffering of the next few videos as you scroll. 
+If I had extra time, I would definitely focus more on the UI. I focused on getting the functional requirements done and nailed first. A definite improvement would be to mirror the way TikTok loads its content for mobile, and making sure there's buffering of the next few videos as you scroll.

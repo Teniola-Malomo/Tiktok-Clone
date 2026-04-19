@@ -1,0 +1,30 @@
+{
+  "configurations" : [
+    {
+      "id" : "6B50B5D1-EC45-45ED-8519-922DE904DFCF",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:KD Tiktok-Clone.xcodeproj",
+      "identifier" : "180705E4250801130096A4A5",
+      "name" : "KD Tiktok-Clone"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:KD Tiktok-Clone.xcodeproj",
+        "identifier" : "6C4103152F9519A100B011DE",
+        "name" : "KD Tiktok-CloneTests"
+      }
+    }
+  ],
+  "version" : 1
+}
